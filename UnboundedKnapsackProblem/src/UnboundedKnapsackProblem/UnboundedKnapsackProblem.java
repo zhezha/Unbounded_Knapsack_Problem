@@ -75,7 +75,6 @@ public class UnboundedKnapsackProblem {
 			for (int j = weights[i]; j <= totalWeight; j++) {
 				if (c[j - weights[i]] + values[i] > c[j]) {
 					c[j] = c[j - weights[i]] + values[i];
-//					p[i][j] = true;
 					p[j] = i;
 				}
 			}
