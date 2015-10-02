@@ -179,7 +179,7 @@ public class UnboundedKnapsackProblem {
 		return resultList;
 	}
 
-	// get the gcd of an integer array with lenght of n
+	// get the gcd of the first n elements of an integer array
 	int ngcd(int[] array, int n) {
 
 		if (n == 1)
