@@ -15,16 +15,15 @@ public class UnboundedKnapsackProblem {
 	public static int totalWeight;
 	public static List<Item> itemList;
 
-	// read file and parse strings to data
-	// itemList is sorted by valueWeightRatio
+	// Read file and parse strings to data.
+	// ItemList is sorted according to valueWeightRatio
 	public UnboundedKnapsackProblem(String filename) throws IOException {
-
 		List<String> lines = FileIO.readFile(filename);
 		totalWeight = Integer.parseInt(lines.get(0));
 		itemList = sortByValueWeightRatio(getItemList(lines, totalWeight));
-
 	}
 
+	
 	public static void main(String[] args) throws IOException {
 
 		if (args.length != 1) {
@@ -38,7 +37,9 @@ public class UnboundedKnapsackProblem {
 
 	}
 
-	// main entry to solver
+	
+	// The main entry to solver.
+	// Backtracking search solver is removed.
 	public void knapsack(int totalWeight, List<Item> itemList) {
 
 		int n = itemList.size();
@@ -58,18 +59,19 @@ public class UnboundedKnapsackProblem {
 		totalWeight /= gcdWeights;
 
 		solveDP(values, weights, totalWeight);
-
 	}
 
+	
 	// solving with dynamic programming
 	void solveDP(int[] values, int[] weights, int totalWeight) {
 
 		int n = values.length;
 		int[] c = new int[totalWeight + 1];
-		// store which item i (p[j] = i) is added to make the total weight up to j
+		// This array stores the items which are added to the packet.
+		// p[j] = i indicates item i is added to make the total weight up to j.
 		int[] p = new int[totalWeight + 1];
 
-		// state transition formula:
+		// State transition formula:
 		// c(j) = max{c(j), c(j - weights[i]) + values[i]}
 		for (int i = 0; i < n; i++) {
 			for (int j = weights[i]; j <= totalWeight; j++) {
@@ -80,26 +82,27 @@ public class UnboundedKnapsackProblem {
 			}
 		}
 
-		// the number of each item in the best solution
-		int[] bestNumEachItem = new int[n];
+		// This array stores the amount of each item in the best solution
+		int[] bestAmountEachItem = new int[n];
 		int minWeights = getMin(weights);
-		// get the number of each item in the best solution
-		// i from n - 1 to 0
+		// Get the amount of each item in the best solution.
+		// i from n - 1 to 0, j from totalWeight to 0.
 		// p[j] = i <=> C(W) = C(W - wi) + vi
-		// next step: p[j - wi] = ? <=> C(W - wi) = C(W - wi - ?) + v?
+		// next step: p[j - wi] = ? <=> C(W - wi) = C(W - wi - w?) + v?
 		int j = totalWeight;
 		while (j >= minWeights) {
-			bestNumEachItem[p[j]]++;
+			bestAmountEachItem[p[j]]++;
 			j -= weights[p[j]];
 		}
 
-		String[] lines = formatOutput(bestNumEachItem);
+		String[] lines = formatOutput(bestAmountEachItem);
 		FileIO.writeFile("output.txt", lines);
 		
 		System.out.println("Problem solved.");
 	}
 
-	// get output strings from the solution
+	
+	// Format the output strings from solution
 	String[] formatOutput(int[] bestNumEachItem) {
 
 		List<String> list = new ArrayList<>();
@@ -130,11 +133,10 @@ public class UnboundedKnapsackProblem {
 		return output;
 	}
 
-	// get minimum value of an array
+	
+	// Get the minimum value of given array.
 	int getMin(int[] array) {
-
 		int result = Integer.MAX_VALUE;
-
 		for (int i = 0; i < array.length; i++) {
 			if (result > array[i]) {
 				result = array[i];
@@ -143,11 +145,10 @@ public class UnboundedKnapsackProblem {
 		return result;
 	}
 
-	// get maximum value of an array
+	
+	// Get the maximum value of given array.
 	int getMax(int[] array) {
-
 		int result = Integer.MIN_VALUE;
-
 		for (int i = 0; i < array.length; i++) {
 			if (result < array[i]) {
 				result = array[i];
@@ -156,11 +157,10 @@ public class UnboundedKnapsackProblem {
 		return result;
 	}
 
-	// sort the customerList by the greedy strategy
+	
+	// Sort the itemList according to value/weight.
 	List<Item> sortByValueWeightRatio(List<Item> itemList) {
-
 		List<Item> resultList = itemList;
-
 		Comparator<Item> comparator = new Comparator<Item>() {
 			@Override
 			public int compare(Item c1, Item c2) {
@@ -173,24 +173,22 @@ public class UnboundedKnapsackProblem {
 				}
 			}
 		};
-
 		Collections.sort(resultList, comparator);
-
 		return resultList;
 	}
 
-	// get the gcd of the first n elements of an integer array
+	
+	// Get the gcd of the first n elements in given array
 	int ngcd(int[] array, int n) {
-
 		if (n == 1)
 			return array[0];
 
 		return gcd(array[n - 1], ngcd(array, n - 1));
 	}
 
-	// get the gcd of a and b
+	
+	// Get the gcd of a and b
 	int gcd(int a, int b) {
-
 		if (a < b) {
 			int tmp = a;
 			a = b;
@@ -204,9 +202,9 @@ public class UnboundedKnapsackProblem {
 		}
 	}
 
-	// get itemList from reading strings
+	
+	// Get itemList from reading strings
 	List<Item> getItemList(List<String> lines, int totalWeight) {
-
 		int numItems = lines.size();
 		List<Item> list = new ArrayList<>();
 
